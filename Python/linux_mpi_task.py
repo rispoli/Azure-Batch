@@ -14,12 +14,12 @@ import multi_task_helpers
 sys.path.append('.')
 import common.helpers  # noqa
 
-_BATCH_ACCOUNT_KEY = 'oSznfJa8SaOzugl0HKPjW8jZGzdBSWYy+/iZ130lrhi5i1ZL9DZENq34a8RdFcx+/V17JZjRvHyC6bOh+3JfKQ=='
-_BATCH_ACCOUNT_NAME = 'dr2020batchtests'
+_BATCH_ACCOUNT_KEY = '***REMOVED***'
+_BATCH_ACCOUNT_NAME = '***REMOVED***'
 _BATCH_ACCOUNT_URL = 'https://' + _BATCH_ACCOUNT_NAME + '.westeurope.batch.azure.com'
 
-_STORAGE_ACCOUNT_KEY = 'Q9JjZlDu9kS9E8PKlKtQ0vItozEZQ2zKmfDXfdBfKw02F3QrmoY74OnRXTHMJtPJ1YHgUQhtBAhrKEA858N5LA=='
-_STORAGE_ACCOUNT_NAME = 'rltdatastagingdr'
+_STORAGE_ACCOUNT_KEY = '***REMOVED***'
+_STORAGE_ACCOUNT_NAME = '***REMOVED***'
 _STORAGE_ACCOUNT_URL = 'https://' + _STORAGE_ACCOUNT_NAME + '.blob.core.windows.net/'
 
 _OS_NAME = 'linux'
