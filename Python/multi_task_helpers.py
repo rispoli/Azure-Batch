@@ -21,7 +21,8 @@ def create_pool_and_wait_for_vms(
         publisher, offer, sku, vm_size,
         target_dedicated_nodes,
         command_line=None, resource_files=None,
-        elevation_level=batch.models.ElevationLevel.admin):
+        elevation_level=batch.models.ElevationLevel.admin,
+        custom_image_share_image_gallery=None):
     """
     Creates a pool of compute nodes with the specified OS settings.
 
@@ -40,6 +41,8 @@ def create_pool_and_wait_for_vms(
     start task.
     :param str elevation_level: Elevation level the task will be run as;
         either 'admin' or 'nonadmin'.
+    :param tuple custom_image_share_image_gallery: SIG reference and SKU type
+        for customized images.
     """
     print('Creating pool [{}]...'.format(pool_id))
 
@@ -55,7 +58,10 @@ def create_pool_and_wait_for_vms(
     # Get the virtual machine configuration for the desired distro and version.
     # For more information about the virtual machine configuration, see:
     # https://azure.microsoft.com/documentation/articles/batch-linux-nodes/
-    sku_to_use, image_ref_to_use = common.helpers.select_latest_verified_vm_image_with_node_agent_sku(batch_service_client, publisher, offer, sku)
+    if custom_image_share_image_gallery != None:
+        sku_to_use, image_ref_to_use = custom_image_share_image_gallery
+    else:
+        sku_to_use, image_ref_to_use = common.helpers.select_latest_verified_vm_image_with_node_agent_sku(batch_service_client, publisher, offer, sku)
     user = batch.models.AutoUserSpecification(
         scope=batch.models.AutoUserScope.pool,
         elevation_level=elevation_level)
