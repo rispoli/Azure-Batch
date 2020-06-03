@@ -48,7 +48,7 @@ def create_pool_and_wait_for_vms(
 
     # If no start task is specified enable Batch Insights (https://github.com/Azure/batch-insights)
     if not command_line:
-        command_line = "/bin/bash -c 'wget  -O - https://raw.githubusercontent.com/Azure/batch-insights/master/centos.sh | bash'"
+        command_line = "/bin/bash -c 'wget  -O - https://raw.githubusercontent.com/Azure/batch-insights/master/scripts/run-linux.sh | bash'"
 
     # Create a new pool of Linux compute nodes using an Azure Virtual Machines
     # Marketplace image. For more information about creating pools of Linux
@@ -79,7 +79,18 @@ def create_pool_and_wait_for_vms(
             command_line=command_line,
             user_identity=batch.models.UserIdentity(auto_user=user),
             wait_for_success=True,
-            resource_files=resource_files) if command_line else None,
+            resource_files=resource_files,
+            environment_settings=[
+                 batch.models.EnvironmentSetting(
+                     name='APP_INSIGHTS_INSTRUMENTATION_KEY',
+                     value='***REMOVED***'),
+                 batch.models.EnvironmentSetting(
+                     name='APP_INSIGHTS_APP_ID',
+                     value='***REMOVED***'),
+                 batch.models.EnvironmentSetting(
+                     name='BATCH_INSIGHTS_DOWNLOAD_URL',
+                     value='***REMOVED***')
+                ]) if command_line else None,
     )
 
     common.helpers.create_pool_if_not_exist(batch_service_client, new_pool)
