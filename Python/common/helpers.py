@@ -22,8 +22,9 @@ def select_latest_verified_vm_image_with_node_agent_sku(batch_client, publisher,
     :return: (node agent sku id to use, vm image ref to use)
     """
     # get verified vm image list and node agent sku ids from service
-    options = batch.models.AccountListSupportedImagesOptions(filter="verificationType eq 'verified'")
-    images = batch_client.account.list_supported_images(account_list_supported_images_options=options)
+    # CentOS HPC 7.6 is not a verified option, disabling. 
+    #options = batch.models.AccountListSupportedImagesOptions(filter="verificationType eq 'verified'")
+    images = batch_client.account.list_supported_images()
 
     # pick the latest supported sku
     skus_to_use = [
