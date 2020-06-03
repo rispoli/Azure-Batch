@@ -6,6 +6,7 @@ import time
 
 import azure.batch as batch
 from azure.batch import batch_auth, BatchServiceClient
+from azure.common.credentials import ServicePrincipalCredentials
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobServiceClient, ContainerSasPermissions, ResourceTypes, generate_blob_sas, generate_container_sas
 
@@ -22,6 +23,10 @@ _STORAGE_ACCOUNT_KEY = '***REMOVED***'
 _STORAGE_ACCOUNT_NAME = '***REMOVED***'
 _STORAGE_ACCOUNT_URL = 'https://' + _STORAGE_ACCOUNT_NAME + '.blob.core.windows.net/'
 
+_AAD_CLIENT_ID = '***REMOVED***'
+_AAD_TENANT = '***REMOVED***'
+_AAD_SP_SECRET = '***REMOVED***'
+
 _OS_NAME = 'linux'
 _APP_NAME = 'pingpong'
 _POOL_ID = common.helpers.generate_unique_resource_name('pool_{}_{}'.format(_OS_NAME, _APP_NAME))
@@ -36,6 +41,11 @@ _TASK_OUTPUT_FILE_PATH_ON_VM = '../std*.txt'
 _TASK_OUTPUT_BLOB_NAME = 'stdout.txt'
 _TASK_ERROR_BLOB_NAME = 'stderr.txt'
 _NUM_INSTANCES = _POOL_NODE_COUNT
+
+_SIG_IMAGE_REFERENCE = batch.models.ImageReference(
+    virtual_machine_image_id="***REMOVED***"
+)
+_SIG_IMAGE_SKU = "batch.node.centos 7"
 
 if __name__ == '__main__':
     start_time = datetime.now().replace(microsecond=0)
@@ -93,16 +103,21 @@ if __name__ == '__main__':
     # nodes, eg. MPI.
     application_cmdline = ['$AZ_BATCH_TASK_WORKING_DIR/application-cmd {}'.format(_NUM_INSTANCES)]
 
-    # Create a Batch service client.  We'll now be interacting with the Batch
-    # service in addition to Storage
-    credentials = batch_auth.SharedKeyCredentials(_BATCH_ACCOUNT_NAME, _BATCH_ACCOUNT_KEY)
+    # Create a Batch service client with Azure AD authentication. We'll now be
+    # interacting with the Batch service in addition to Storage
+    credentials = ServicePrincipalCredentials(
+        client_id=_AAD_CLIENT_ID,
+        secret=_AAD_SP_SECRET,
+        tenant=_AAD_TENANT,
+        resource="https://batch.core.windows.net/"
+    )
     batch_client = BatchServiceClient(credentials, batch_url=_BATCH_ACCOUNT_URL)
 
     # Create the pool that will contain the compute nodes that will execute the
     # tasks. The resource files we pass in are used for configuring the pool's
     # start task, which is executed each time a node first joins the pool (or
     # is rebooted or re-imaged).
-    multi_task_helpers.create_pool_and_wait_for_vms(batch_client, _POOL_ID, _NODE_OS_PUBLISHER, _NODE_OS_OFFER, _NODE_OS_SKU, _POOL_VM_SIZE, _POOL_NODE_COUNT)
+    multi_task_helpers.create_pool_and_wait_for_vms(batch_client, _POOL_ID, _NODE_OS_PUBLISHER, _NODE_OS_OFFER, _NODE_OS_SKU, _POOL_VM_SIZE, _POOL_NODE_COUNT, custom_image_share_image_gallery = (_SIG_IMAGE_SKU, _SIG_IMAGE_REFERENCE))
 
     # Create the job that will run the tasks.
     common.helpers.create_job(batch_client, _JOB_ID, _POOL_ID)
