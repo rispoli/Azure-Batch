@@ -4,12 +4,13 @@
 
 # For more details of MPI/RDMA, visit: https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/rdma-cluster
 
-# Use the Intel MPI exists in CentOS-HPC 7.4 image:
-source /opt/intel/impi/5.1.3.223/bin64/mpivars.sh
-# Prepare environment variables for Intel MPI to use RDMA on H16r:
-export I_MPI_FABRICS=shm:dapl
-export I_MPI_DAPL_PROVIDER=ofa-v2-ib0
-export I_MPI_DYNAMIC_CONNECTION=0
+# Use the Intel MPI exists in CentOS-HPC 7.6 image:
+source /opt/intel/impi/2019.7.217/intel64/bin/mpivars.sh
+# Prepare environment variables for Intel MPI to use RDMA on HB120_v2:
+export FI_PROVIDER=verbs
+export I_MPI_FABRICS=shm:ofi
+export I_MPI_DEBUG=5
+export I_MPI_FALLBACK_DEVICE=0 
 
 # Debugging:
 echo '---------------------------------------------------------'
