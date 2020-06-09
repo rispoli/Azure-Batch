@@ -175,7 +175,7 @@ def wait_for_subtasks_to_complete(
     """
     timeout_expiration = datetime.now() + timeout
 
-    print("Monitoring all tasks for 'Completed' state, timeout in {}..."
+    print("Monitoring all subtasks for 'Completed' state, timeout in {}..."
           .format(timeout), end='')
 
     while datetime.now() < timeout_expiration:
