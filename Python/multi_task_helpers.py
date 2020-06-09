@@ -224,7 +224,7 @@ def wait_for_tasks_to_complete(batch_service_client, job_id, timeout):
                 # Pause execution until subtasks reach Completed state.
                 wait_for_subtasks_to_complete(batch_service_client, job_id,
                                               task.id,
-                                              datetime.timedelta(minutes=10))
+                                              timedelta(minutes=10))
 
         incomplete_tasks = [task for task in tasks if
                             task.state != batch.models.TaskState.completed]
