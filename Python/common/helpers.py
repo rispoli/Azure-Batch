@@ -73,7 +73,7 @@ def create_job(batch_service_client, job_id, pool_id):
 
     try:
         batch_service_client.job.add(job)
-    except batch.models.batch_error.BatchErrorException as err:
+    except batch.models.BatchErrorException as err:
         print_batch_exception(err)
         if err.error.code != "JobExists":
             raise
