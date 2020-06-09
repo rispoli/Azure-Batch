@@ -217,16 +217,15 @@ def wait_for_tasks_to_complete(batch_service_client, job_id, timeout):
     while datetime.now() < timeout_expiration:
         print('.', end='')
         sys.stdout.flush()
-        tasks = batch_service_client.task.list(job_id)
 
-        for task in tasks:
+        for task in batch_service_client.task.list(job_id):
             if task.state == batch.models.TaskState.completed:
                 # Pause execution until subtasks reach Completed state.
                 wait_for_subtasks_to_complete(batch_service_client, job_id,
                                               task.id,
                                               timedelta(minutes=10))
 
-        incomplete_tasks = [task for task in tasks if
+        incomplete_tasks = [task for task in batch_service_client.task.list(job_id) if
                             task.state != batch.models.TaskState.completed]
         if not incomplete_tasks:
             print()
