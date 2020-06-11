@@ -140,6 +140,22 @@ def create_sas_token(blob_client, container_name, blob_name, permission, expiry=
         expiry=expiry
     )
 
+def delete_blob_if_exist(container_client, container_name, blob_name):
+    """Uploads a file from local disk to Azure Storage and creates
+    a SAS for it.
+
+    :param container_client: The storage container client to use.
+    :type container_client: `azure.storage.blob.ContainerClient`
+    :param str container_name: The name of the container to upload the blob to.
+    :param str blob_name: The name of the blob to upload the local file to.
+    """
+    blob_list = container_client.list_blobs(blob_name)
+    for blob in blob_list:
+        if(blob.name == blob_name):
+            print('Blob {} already existing deleting it'.format(blob_name))
+            container_client.delete_blob(blob)
+            break
+
 def upload_blob_and_create_sas(container_client, container_name, blob_name, file_path, expiry, timeout=None):
     """Uploads a file from local disk to Azure Storage and creates
     a SAS for it.
@@ -156,6 +172,8 @@ def upload_blob_and_create_sas(container_client, container_name, blob_name, file
     :return: A SAS URL to the blob with the specified expiry time.
     :rtype: str
     """
+    delete_blob_if_exist(container_client, container_name, blob_name)
+
     with open(file_path, "rb") as data:
         blob_client = container_client.upload_blob(name=blob_name, data=data)
 
